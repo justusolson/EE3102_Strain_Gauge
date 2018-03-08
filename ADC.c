@@ -13,13 +13,19 @@
 
 /*******************************************************************
  * Function: adc_config
- * Parameters: res(resolution) specifies the bit resolution and SPS
+ * Parameters: res(resolution): specifies the bit resolution and SPS
  *                  of the ADC.
- *                      0=12 bits and 240SPS
- *                      1=14 bits and 60SPS
- *                      2=16 bits and 15SPS
+ *                      12=12 bits and 240SPS
+ *                      14=14 bits and 60SPS
+ *                      16=16 bits and 15SPS
+ *                      defaults to 12
+ *              pga: Programmable Gain Amplifier can be set to
+ *                  x1, x2, x4, or x8
+ *                  defaults to x1
+ *              mode: Continuous(0) or One-Shot Mode(1), defaults to
+ *                  continuous
  ******************************************************************/
-void adc_config(int res){
+void adc_config(int res, int pga){
     
 }
 
@@ -44,5 +50,5 @@ void adc_init(void){
     IFS3bits.MI2C2IF = 0; //clear interrupt flag
     
     
-    adc_config(2);
+    adc_config(16, 2, 0);
 }
