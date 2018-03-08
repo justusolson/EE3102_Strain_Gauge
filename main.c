@@ -27,7 +27,7 @@ void loop(void){
     sprintf(outStrA, "%7.6f", (3.3/1024)*adValue);
     outStrB="Volts";
     lcd_printStrB(outStrA, 0);
-    lcd_printStrB(outStrB, 0);
+    lcd_printStrB(outStrB, 1);
     wait(50);
 }
 
