@@ -26,7 +26,16 @@
  *              mode: Continuous(0) or One-Shot Mode(1), defaults to
  *                  continuous
  ******************************************************************/
-void adc_config(int res, int pga){
+void adc_config(int res, int pga, int mode){
+    if(res==14){//14 bit resolution
+        
+    }
+    else if(res==16){//16 bit resolution
+        
+    }
+    else{//default to 12 bit
+        
+    }
     
 }
 
