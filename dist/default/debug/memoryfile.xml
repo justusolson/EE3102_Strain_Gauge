@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/EE3102_Strain_Gauge.X.production.elf">
+  <executable name="dist/default/debug/EE3102_Strain_Gauge.X.debug.elf">
     <memory name="data">
       <units>bytes</units>
       <length>8192</length>
-      <used>124</used>
-      <free>8068</free>
+      <used>204</used>
+      <free>7988</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
