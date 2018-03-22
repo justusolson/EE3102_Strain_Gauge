@@ -28,7 +28,7 @@ void loop(void){
     outStrB="Volts";
     lcd_printStrB(outStrA, 0);
     lcd_printStrB(outStrB, 1);
-    wait(50);
+    wait(67);   //roughly 15 times per second which is the rate that ADC samples
 }
 
 int main(void) {

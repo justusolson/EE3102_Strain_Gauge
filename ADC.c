@@ -43,15 +43,7 @@ void adc_config(int res, int pga, int mode){
         outputByte &= 0b11110011; //sets 0bxxxx00xx
     }
     
-    
-    if(mode == 0){ //One-shot mode
-        outputByte &= 0b11101111; //sets 0bxxx0xxxx
-    }
-    else{   //continuous mode (defaults)
-        outputByte |= 0b00010000; //sets 0bxxx1xxxx
-    }
-    
-    
+  
     if(pga == 8){   //x8 pga
         outputByte |= 0b00000011;   //sets 0bxxxxxx11
     }
@@ -66,6 +58,14 @@ void adc_config(int res, int pga, int mode){
     else{               //defaults to x1 pga
         outputByte &= 0b11111100;   //sets 0bxxxxxx00
     }
+    
+    
+    if(mode == 0){ //One-shot mode
+        outputByte &= 0b11101111; //sets 0bxxx0xxxx
+    }
+    else{   //continuous mode (defaults)
+        outputByte |= 0b00010000; //sets 0bxxx1xxxx
+    }
     //write code to push outputByte to MCP
     
     I2C2CONbits.SEN = 1; //START bit
@@ -78,6 +78,10 @@ void adc_config(int res, int pga, int mode){
     
     I2C1TRN = outputByte;//config byte
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
+    IFS3bits.MI2C2IF = 0; //reset
+    
+    I2C2CONbits.PEN = 1;
+    while(I2C2CONbits.PEN==1);  //wait for stop bit to clear
     IFS3bits.MI2C2IF = 0; //reset
 }
 
@@ -105,4 +109,19 @@ void adc_init(void){
     
     
     adc_config(16, 2, 1);   //set ADC to 16 bit mode, PGA of 2, Continuous mode
+}
+
+/********************************************************************
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ ********************************************************************/
+
+void read_adc(void){
+    
 }
