@@ -156,14 +156,19 @@ double read_adc(void){
     LowerByte = I2C2RCV;
     I2C2CONbits.ACKDT = 1;  //sends NACK
     I2C2CONbits.ACKEN=1;
-    int outputByte = (UpperByte <<8) + LowerByte;
+    int wholeByte = (UpperByte <<8) + LowerByte;
     double outputVoltage;
+    int outputNum;
     
-    char buffer[64]=""; 
-    sprintf(buffer, "%d", outputByte);
-    outputByte = atoi(buffer);
+    const int negative = (wholeByte & (1 << 15)) != 0;
+    if(negative){
+        outputNum = wholeByte | ~((1 << 16) - 1);
+    }
+    else{
+        outputNum = wholeByte;
+    }
     
-    outputVoltage = outputByte * LSB_PGA;
+    outputVoltage = outputNum * LSB_PGA;
     
     return outputVoltage;
 }
