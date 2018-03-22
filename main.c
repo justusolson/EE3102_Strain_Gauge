@@ -10,6 +10,7 @@
 #include "ADC.h"
 #include "LCD.h"
 #include "DELAY.h"
+#include <stdio.h>
 
 void setup(void){
     CLKDIVbits.RCDIV = 0;
@@ -20,12 +21,11 @@ void setup(void){
 
 void loop(void){
     char outStrA[8];
-    char outStrB[8];
+    char outStrB[8]= "Volts";
     double adValue;
     
     adValue = read_adc();
     sprintf(outStrA, "%7.6f", adValue);
-    outStrB="Volts";
     lcd_printStrB(outStrA, 0);
     lcd_printStrB(outStrB, 1);
     wait(67);   //roughly 15 times per second which is the rate that ADC samples
