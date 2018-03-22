@@ -10,7 +10,8 @@
 #include "xc.h"
 #include "ADC.h"
 
-#define SLAVE_ADDRESS 0b11010001 //set to read, last bit is R/nW
+#define READ_SLAVE 0b11010001 //set to read, last bit is R/nW
+#define WRITE_SLAVE 0b11010000 //set to write
 
 /*******************************************************************
  * Function: adc_config
@@ -27,7 +28,7 @@
  *                  continuous
  ******************************************************************/
 void adc_config(int res, int pga, int mode){
-    unsigned char outputByte = 0b00000000;
+    unsigned char outputByte = 0b10000000;
     if(res==14){//14 bit resolution
         outputByte |= 0b00000100;
         outputByte &= 0b11110111; //sets 0bxxxx01xx
@@ -64,6 +65,18 @@ void adc_config(int res, int pga, int mode){
         outputByte &= 0b11111100;   //sets 0bxxxxxx00
     }
     //write code to push outputByte to MCP
+    
+    I2C2CONbits.SEN = 1; //START bit
+    while(I2C1CONbits.SEN==1);//wait for SEN to clear
+     IFS3bits.MI2C2IF = 0; //reset
+    
+    I2C2TRN = WRITE_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
+    IFS3bits.MI2C2IF = 0; //reset
+    
+    I2C1TRN = outputByte;//config byte
+    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
+    IFS3bits.MI2C2IF = 0; //reset
 }
 
 /*******************************************************************
