@@ -11,11 +11,13 @@
 
 #include "xc.h"
 #include "ADC.h"
+#include "math.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 #define READ_SLAVE 0b11010001 //set to read, last bit is R/nW
 #define WRITE_SLAVE 0b11010000 //set to write
-int BUF[16];
-int INDEX = 0;
+double LSB_PGA = 0;
 
 /*******************************************************************
  * Function: adc_config
@@ -33,6 +35,7 @@ int INDEX = 0;
  ******************************************************************/
 void adc_config(int res, int pga, int mode){
     unsigned char outputByte = 0b10000000;
+    
     if(res==14){//14 bit resolution
         outputByte |= 0b00000100;
         outputByte &= 0b11110111; //sets 0bxxxx01xx
@@ -43,6 +46,7 @@ void adc_config(int res, int pga, int mode){
     }
     else{//default to 12 bit
         outputByte &= 0b11110011; //sets 0bxxxx00xx
+        res =12;
     }
     
   
@@ -59,8 +63,10 @@ void adc_config(int res, int pga, int mode){
     }
     else{               //defaults to x1 pga
         outputByte &= 0b11111100;   //sets 0bxxxxxx00
+        pga=1;
     }
     
+    LSB_PGA = (4.096/ pow(2,res))/pga;
     
     if(mode == 0){ //One-shot mode
         outputByte &= 0b11101111; //sets 0bxxx0xxxx
@@ -124,9 +130,9 @@ void adc_init(void){
  *
  ********************************************************************/
 
-void read_adc(void){
+double read_adc(void){
     
-    
+    I2C2CONbits.ACKDT = 0;  //sends ACK
     I2C2CONbits.SEN = 1; //START bit
     while(I2C1CONbits.SEN==1);//wait for SEN to clear
     IFS3bits.MI2C2IF = 0; //reset
@@ -138,12 +144,27 @@ void read_adc(void){
     I2C2CONbits.RCEN = 1;
     while(!I2C2STATbits.RBF);//while the buffer is not full wait
     
-    int MSB, LSB;
-    MSB = I2C2RCV;
+    unsigned char UpperByte, LowerByte;
+    UpperByte = I2C2RCV;
     I2C2CONbits.ACKEN=1;
     
     while(I2C2CONbits.ACKEN==1);//wait for ACKEN to clear
-    while(!I2C2STATbits.RBF);
     
+    I2C2CONbits.RCEN = 1;
+    while(!I2C2STATbits.RBF);//while the buffer is not full wait
     
+    LowerByte = I2C2RCV;
+    I2C2CONbits.ACKDT = 1;  //sends NACK
+    I2C2CONbits.ACKEN=1;
+    int outputByte = UpperByte <<8 + LowerByte;
+    int MSB = UpperByte >> 7;
+    double outputVoltage;
+    
+    char buffer[16]; 
+    snprintf(buffer, 16, "%d", outputByte);
+    int outputByte = itoa(buffer);
+    
+    outputVoltage = outputByte * LSB_PGA;
+    
+    return outputVoltage;
 }

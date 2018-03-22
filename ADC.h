@@ -13,6 +13,7 @@ extern "C" {
 #endif
 
     void adc_init(void);
+    double read_adc(void);
 
 
 #ifdef	__cplusplus

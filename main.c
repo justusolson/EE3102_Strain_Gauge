@@ -21,10 +21,10 @@ void setup(void){
 void loop(void){
     char outStrA[8];
     char outStrB[8];
-    int adValue;
+    double adValue;
     
-    //adValue = getBuffer(0);
-    sprintf(outStrA, "%7.6f", (3.3/1024)*adValue);
+    adValue = read_adc();
+    sprintf(outStrA, "%7.6f", adValue);
     outStrB="Volts";
     lcd_printStrB(outStrA, 0);
     lcd_printStrB(outStrB, 1);
@@ -34,7 +34,7 @@ void loop(void){
 int main(void) {
     setup();
     while(1){
-        loop;
+        loop();
     }
     return 0;
 }
