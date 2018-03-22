@@ -23,20 +23,47 @@
  *              pga: Programmable Gain Amplifier can be set to
  *                  x1, x2, x4, or x8
  *                  defaults to x1
- *              mode: Continuous(0) or One-Shot Mode(1), defaults to
+ *              mode: Continuous(1) or One-Shot Mode(0), defaults to
  *                  continuous
  ******************************************************************/
 void adc_config(int res, int pga, int mode){
+    unsigned char outputByte = 0b00000000;
     if(res==14){//14 bit resolution
-        
+        outputByte |= 0b00000100;
+        outputByte &= 0b11110111; //sets 0bxxxx01xx
     }
     else if(res==16){//16 bit resolution
-        
+        outputByte |= 0b00001000;
+        outputByte &= 0b11111011; //sets 0bxxxx10xx
     }
     else{//default to 12 bit
-        
+        outputByte &= 0b11110011; //sets 0bxxxx00xx
     }
     
+    
+    if(mode == 0){ //One-shot mode
+        outputByte &= 0b11101111; //sets 0bxxx0xxxx
+    }
+    else{   //continuous mode (defaults)
+        outputByte |= 0b00010000; //sets 0bxxx1xxxx
+    }
+    
+    
+    if(pga == 8){   //x8 pga
+        outputByte |= 0b00000011;   //sets 0bxxxxxx11
+    }
+    else if(pga == 4){  //x4 pga
+        outputByte |= 0b00000010;
+        outputByte &= 0b11111110;   //sets 0bxxxxxx10
+    }
+    else if(pga == 2){  //x2 pga
+        outputByte |= 0b00000001;
+        outputByte &= 0b11111101;   //sets 0bxxxxxx01
+    }
+    else{               //defaults to x1 pga
+        outputByte &= 0b11111100;   //sets 0bxxxxxx00
+    }
+    //write code to push outputByte to MCP
 }
 
 /*******************************************************************
@@ -60,5 +87,5 @@ void adc_init(void){
     IFS3bits.MI2C2IF = 0; //clear interrupt flag
     
     
-    adc_config(16, 2, 0);
+    adc_config(16, 2, 1);   //set ADC to 16 bit mode, PGA of 2, Continuous mode
 }
