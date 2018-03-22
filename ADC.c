@@ -7,6 +7,8 @@
 
 //Hi Justus
 
+#include <p24FJ64GA002.h>
+
 #include "xc.h"
 #include "ADC.h"
 
@@ -94,6 +96,8 @@ void adc_init(void){
     //RB3 = SCL2, RB2 = SDA2
     TRISBbits.TRISB2 = 0;   //sets SDA2 to output
     TRISBbits.TRISB3 = 0;   //sets SCL2 to output
+    I2C2CONbits.DISSLW = 0; //enabling slew rate control
+    I2C2ADD = 0x0;          //set addressing mode to 7 bits
     I2C2CONbits.I2CEN = 0; //disable I2C bus
     I2C2BRG = 0x9d;      //SCL at 100kHz
     I2C2CONbits.I2CEN = 1; //enable I2C bus
