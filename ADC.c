@@ -14,6 +14,8 @@
 
 #define READ_SLAVE 0b11010001 //set to read, last bit is R/nW
 #define WRITE_SLAVE 0b11010000 //set to write
+int BUF[16];
+int INDEX = 0;
 
 /*******************************************************************
  * Function: adc_config
@@ -112,7 +114,7 @@ void adc_init(void){
 }
 
 /********************************************************************
- *
+ * Function: read_adc
  *
  *
  *
@@ -123,5 +125,25 @@ void adc_init(void){
  ********************************************************************/
 
 void read_adc(void){
+    
+    
+    I2C2CONbits.SEN = 1; //START bit
+    while(I2C1CONbits.SEN==1);//wait for SEN to clear
+    IFS3bits.MI2C2IF = 0; //reset
+    
+    I2C2TRN = READ_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
+    IFS3bits.MI2C2IF = 0; //reset
+    
+    I2C2CONbits.RCEN = 1;
+    while(!I2C2STATbits.RBF);//while the buffer is not full wait
+    
+    int MSB, LSB;
+    MSB = I2C2RCV;
+    I2C2CONbits.ACKEN=1;
+    
+    while(I2C2CONbits.ACKEN==1);//wait for ACKEN to clear
+    while(!I2C2STATbits.RBF);
+    
     
 }
