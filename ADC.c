@@ -12,11 +12,12 @@
 #include "xc.h"
 #include "ADC.h"
 #include "math.h"
+#include "DELAY.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-#define READ_SLAVE 0b11010011 //set to read, last bit is R/nW
-#define WRITE_SLAVE 0b11010010 //set to write
+#define READ_SLAVE 0b11010001 //set to read, last bit is R/nW
+#define WRITE_SLAVE 0b11010000 //set to write
 double LSB_PGA = 0;
 
 /*******************************************************************
@@ -77,14 +78,14 @@ void adc_config(int res, int pga, int mode){
     //write code to push outputByte to MCP
     
     I2C2CONbits.SEN = 1; //START bit
-    while(I2C1CONbits.SEN==1);//wait for SEN to clear
+    while(I2C2CONbits.SEN==1);//wait for SEN to clear
      IFS3bits.MI2C2IF = 0; //reset
     
     I2C2TRN = WRITE_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
     
-    I2C1TRN = outputByte;//config byte
+    I2C2TRN = outputByte;//config byte
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
     
@@ -114,7 +115,27 @@ void adc_init(void){
     I2C2BRG = 0x9d;      //SCL at 100kHz
     I2C2CONbits.I2CEN = 1; //enable I2C bus
     IFS3bits.MI2C2IF = 0; //clear interrupt flag
+    I2C2CONbits.ACKDT = 0;  //sends ACK
+    CNPU1bits.CN6PUE = 0;   
+    CNPU1bits.CN7PUE = 0; 
+    CNEN1bits.CN6IE =0;
+    CNEN1bits.CN7IE =0;
     
+    /*
+     AD1PCFGbits.PCFG4 = 1; //Sets SDA2/SCL2 as digital
+    AD1PCFGbits.PCFG5 = 1;
+    //RB3 = SCL2, RB2 = SDA2
+    TRISBbits.TRISB2 = 0;   //sets SDA2 to output
+    TRISBbits.TRISB3 = 0;   //sets SCL2 to output
+    I2C2CONbits.DISSLW = 0; //enabling slew rate control
+    I2C2ADD = 0x0;          //set addressing mode to 7 bits
+    I2C2CONbits.I2CEN = 0; //disable I2C bus
+    I2C2BRG = 0x9d;      //SCL at 100kHz
+    I2C2CONbits.I2CEN = 1; //enable I2C bus
+    IFS3bits.MI2C2IF = 0; //clear interrupt flag*/
+    
+    
+    wait(50);
     
     adc_config(16, 2, 1);   //set ADC to 16 bit mode, PGA of 2, Continuous mode
 }
@@ -134,7 +155,7 @@ double read_adc(void){
     
     I2C2CONbits.ACKDT = 0;  //sends ACK
     I2C2CONbits.SEN = 1; //START bit
-    while(I2C1CONbits.SEN==1);//wait for SEN to clear
+    while(I2C2CONbits.SEN==1);//wait for SEN to clear
     IFS3bits.MI2C2IF = 0; //reset
     
     I2C2TRN = READ_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
