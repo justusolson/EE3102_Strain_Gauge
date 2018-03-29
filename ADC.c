@@ -15,8 +15,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define READ_SLAVE 0b11010001 //set to read, last bit is R/nW
-#define WRITE_SLAVE 0b11010000 //set to write
+#define READ_SLAVE 0b11010011 //set to read, last bit is R/nW
+#define WRITE_SLAVE 0b11010010 //set to write
 double LSB_PGA = 0;
 
 /*******************************************************************
