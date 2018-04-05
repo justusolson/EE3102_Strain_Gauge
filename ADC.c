@@ -81,7 +81,7 @@ void adc_config(int res, int pga, int mode){
     while(I2C2CONbits.SEN==1);//wait for SEN to clear
      IFS3bits.MI2C2IF = 0; //reset
     
-    I2C2TRN = WRITE_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    I2C2TRN = 0b11010000; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
     
@@ -109,10 +109,10 @@ void adc_init(void){
     //RB3 = SCL2, RB2 = SDA2
     TRISBbits.TRISB2 = 0;   //sets SDA2 to output
     TRISBbits.TRISB3 = 0;   //sets SCL2 to output
-    I2C2CONbits.DISSLW = 0; //enabling slew rate control
+    //I2C2CONbits.DISSLW = 0; //enabling slew rate control
     I2C2ADD = 0x0;          //set addressing mode to 7 bits
     I2C2CONbits.I2CEN = 0; //disable I2C bus
-    I2C2BRG = 0x9d;      //SCL at 100kHz
+    I2C2BRG = 0x4E;      //SCL at 100kHz
     I2C2CONbits.I2CEN = 1; //enable I2C bus
     IFS3bits.MI2C2IF = 0; //clear interrupt flag
     I2C2CONbits.ACKDT = 0;  //sends ACK

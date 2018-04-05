@@ -20,11 +20,11 @@ Command:
   build/default/debug/DELAYB.o \
   build/default/debug/main.o \
   build/default/debug/ADC.o \
-  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp00000fb4.00 \
-  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp00000fb4.01 \
-  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp00000fb4.02 \
-  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp00000fb4.03 \
-  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp00000fb4.04 \
+  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp000021b8.00 \
+  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp000021b8.01 \
+  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp000021b8.02 \
+  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp000021b8.03 \
+  -TC:\\Users\\Justus\\AppData\\Local\\Temp\\tmp000021b8.04 \
   --defsym=__MPLAB_BUILD=1 \
   --defsym=__MPLAB_DEBUG=1 \
   --defsym=__DEBUG=1 \
@@ -179,11 +179,11 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200              0x16d8          0x2244  (8772)
 .const                      0x18d8                 0x6             0x9  (9)
-.text                       0x18de               0x42e           0x645  (1605)
-.dinit                      0x1d0c                0x78            0xb4  (180)
-.text                       0x1d84                0x80            0xc0  (192)
+.text                       0x18de               0x42c           0x642  (1602)
+.dinit                      0x1d0a                0x78            0xb4  (180)
+.text                       0x1d82                0x80            0xc0  (192)
 
-                 Total program memory used (bytes):         0x2a06  (10758) 16%
+                 Total program memory used (bytes):         0x2a03  (10755) 16%
 
 
 Data Memory  [Origin = 0x800, Length = 0x2000]
@@ -308,13 +308,13 @@ External Symbols in Program Memory (by address):
                   0x001b3a                  _lcd_cmdSeqEnd
                   0x001b76                  _adc_config
                   0x001c46                  _adc_init
-                  0x001c78                  _read_adc
-                  0x001d84                  _setup
-                  0x001d96                  _loop
-                  0x001dd6                  _main
-                  0x001dde                  _wait
-                  0x001df8                  _delay_100us
-                  0x001dfe                  _delay_1ms
+                  0x001c76                  _read_adc
+                  0x001d82                  _setup
+                  0x001d94                  _loop
+                  0x001dd4                  _main
+                  0x001ddc                  _wait
+                  0x001df6                  _delay_100us
+                  0x001dfc                  _delay_1ms
 
 External Symbols in Program Memory (by name):
 
@@ -383,8 +383,8 @@ External Symbols in Program Memory (by name):
                   0x000a16                  __sprintf_fF
                   0x001b76                  _adc_config
                   0x001c46                  _adc_init
-                  0x001df8                  _delay_100us
-                  0x001dfe                  _delay_1ms
+                  0x001df6                  _delay_100us
+                  0x001dfc                  _delay_1ms
                   0x001094                  _div
                   0x0006dc                  _expf
                   0x0018de                  _lcd_cmd
@@ -399,14 +399,14 @@ External Symbols in Program Memory (by name):
                   0x0008e0                  _ldexpf
                   0x0010aa                  _ldiv
                   0x000924                  _logf
-                  0x001d96                  _loop
-                  0x001dd6                  _main
+                  0x001d94                  _loop
+                  0x001dd4                  _main
                   0x0010d4                  _memcpy
                   0x000440                  _powf
-                  0x001c78                  _read_adc
-                  0x001d84                  _setup
+                  0x001c76                  _read_adc
+                  0x001d82                  _setup
                   0x0010e2                  _strchr
-                  0x001dde                  _wait
+                  0x001ddc                  _wait
                   0x000a08                  sprintf_fF.XXeo:_prout
 
 Memory Configuration
@@ -672,13 +672,13 @@ __CONFIG1
  .debug_abbrev    0x00017b         0xf6 build/default/debug/main.o
  .debug_abbrev    0x000271        0x171 build/default/debug/ADC.o
 
-.debug_line       0x000000        0x323
+.debug_line       0x000000        0x322
  *(.debug_line)
  .debug_line      0x000000         0x39 build/default/debug/DELAY.o
  .debug_line      0x000039        0x124 build/default/debug/lcd_display.o
  .debug_line      0x00015d         0x3b build/default/debug/DELAYB.o
  .debug_line      0x000198         0xa1 build/default/debug/main.o
- .debug_line      0x000239         0xea build/default/debug/ADC.o
+ .debug_line      0x000239         0xe9 build/default/debug/ADC.o
 
 .debug_frame      0x000000        0x224
  *(.debug_frame)
@@ -1473,7 +1473,7 @@ __c30_signature
 .const              0x98d8          0x6 load address 0x0018d8  
  .const             0x98d8          0x6 build/default/debug/main.o
 
-.text             0x0018de        0x42e
+.text             0x0018de        0x42c
  .text            0x0018de        0x298 build/default/debug/lcd_display.o
                   0x0018de                  _lcd_cmd
                   0x001930                  _lcd_init
@@ -1484,21 +1484,21 @@ __c30_signature
                   0x001abc                  _lcd_cmdSeqStart
                   0x001b0a                  _lcd_cmdSeqMid
                   0x001b3a                  _lcd_cmdSeqEnd
- .text            0x001b76        0x196 build/default/debug/ADC.o
+ .text            0x001b76        0x194 build/default/debug/ADC.o
                   0x001b76                  _adc_config
                   0x001c46                  _adc_init
-                  0x001c78                  _read_adc
+                  0x001c76                  _read_adc
 
-.dinit            0x001d0c         0x78
- .dinit           0x001d0c         0x78 data_init
+.dinit            0x001d0a         0x78
+ .dinit           0x001d0a         0x78 data_init
 
-.text             0x001d84         0x80
- .text            0x001d84         0x5a build/default/debug/main.o
-                  0x001d84                  _setup
-                  0x001d96                  _loop
-                  0x001dd6                  _main
- .text            0x001dde         0x1a build/default/debug/DELAYB.o
-                  0x001dde                  _wait
- .text            0x001df8          0xc build/default/debug/DELAY.o
-                  0x001df8                  _delay_100us
-                  0x001dfe                  _delay_1ms
+.text             0x001d82         0x80
+ .text            0x001d82         0x5a build/default/debug/main.o
+                  0x001d82                  _setup
+                  0x001d94                  _loop
+                  0x001dd4                  _main
+ .text            0x001ddc         0x1a build/default/debug/DELAYB.o
+                  0x001ddc                  _wait
+ .text            0x001df6          0xc build/default/debug/DELAY.o
+                  0x001df6                  _delay_100us
+                  0x001dfc                  _delay_1ms
