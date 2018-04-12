@@ -35,6 +35,9 @@
 void setup(void){
     CLKDIVbits.RCDIV = 0;
     lcd_init();//on I2C1
+    char* test = "WADDUP";
+    lcd_printStrB(test, 0);
+    wait(100);
     adc_init();//on I2C2
     return;
 }
@@ -45,7 +48,12 @@ void loop(void){
     double adValue= 0.235;
     
     adValue = read_adc();
+    if(adValue >= 0){
     sprintf(outStrA, "%7.6f", adValue);
+    }
+    else{
+        sprintf(outStrA, "%7.5f", adValue);
+    }
     lcd_printStrB(outStrA, 0);
     lcd_printStrB(outStrB, 1);
     wait(67);   //roughly 15 times per second which is the rate that ADC samples
