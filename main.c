@@ -35,10 +35,10 @@
 void setup(void){
     CLKDIVbits.RCDIV = 0;
     lcd_init();//on I2C1
-    char* test = "WADDUP";
+    char* test = "LCD up";
     lcd_printStrB(test, 0);
     wait(100);
-    adc_init();//on I2C2
+    adc_init();//on I2C2]
     return;
 }
 
