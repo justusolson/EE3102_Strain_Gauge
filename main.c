@@ -38,7 +38,8 @@ void setup(void){
     char* test = "LCD up";
     lcd_printStrB(test, 0);
     wait(100);
-    adc_init();//on I2C2]
+    adc_init();//on I2C2
+//    ic_init();
     return;
 }
 

@@ -81,7 +81,7 @@ void adc_config(int res, int pga, int mode){
     while(I2C2CONbits.SEN==1);//wait for SEN to clear
      IFS3bits.MI2C2IF = 0; //reset
     
-    I2C2TRN = 0b11010000; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    I2C2TRN = WRITE_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
     
@@ -137,7 +137,7 @@ void adc_init(void){
     
     wait(50);
     
-    adc_config(16, 2, 1);   //set ADC to 16 bit mode, PGA of 2, Continuous mode
+    adc_config(16, 1, 1);   //set ADC to 16 bit mode, PGA of 2, Continuous mode
 }
 
 /********************************************************************

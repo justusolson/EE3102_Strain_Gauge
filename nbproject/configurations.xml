@@ -7,6 +7,7 @@
       <itemPath>DELAY.h</itemPath>
       <itemPath>LCD.h</itemPath>
       <itemPath>ADC.h</itemPath>
+      <itemPath>IC.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -20,6 +21,7 @@
       <itemPath>DELAYB.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>ADC.c</itemPath>
+      <itemPath>IC.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -191,6 +193,7 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
         <property key="memories.dataflash" value="true"/>
