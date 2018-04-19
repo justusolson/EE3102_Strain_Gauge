@@ -5,8 +5,8 @@
  * Created on February 5, 2017, 10:36 AM
  */
 
-#ifndef PEPIN024_LAB6_DELAY_V001_H
-#define	PEPIN024_LAB6_DELAY_V001_H
+#ifndef DELAY_H
+#define	DELAY_H
 
 #ifdef	__cplusplus
 extern "C" {
@@ -14,6 +14,7 @@ extern "C" {
     void delay_100us(void);
     void delay_1ms(void);
     void wait(int t);
+    void delay_10us(void);
 
 
 

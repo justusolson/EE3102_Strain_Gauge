@@ -5,39 +5,38 @@
  * Created on April 12, 2018, 5:03 PM
  */
 
-#include <p24FJ64GA002.h>
 
 #include "xc.h"
-#include "ADC.h"
 #include "math.h"
 #include "DELAY.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "IC.h"
+#include <libpic30.h>
+
+int button;
+int checkTare(void)
+{
+    if(button == PORTBbits.RB6) //check if the button state has changed
+        return 0;
+    int temp = PORTBbits.RB6;
+    int n =0;
+    while(n < 4) //this loop checks to see if a button was pressed for a significant amount of time, 4 loops
+    { //exits loop when button has been held for 4 loops
+        if(PORTBbits.RB6 == temp)  //if the button's state hasn't changed, increment n
+            n++;
+        else    //if the button's state has changed return no button press
+            return 0;
+        
+        delay_10us();
+    }
+    button = temp;
+    return button;
+}
 
 void ic_init(void)
-{
-
+{   
+    button = 0;
     // add your configuration commands below
-    PORTB = 0xffff;
-    TRISB = 0x7fff; // bit 15 is an output
-
-    __builtin_write_OSCCONL(OSCCON & 0xbf); // unlock PPS
-    _IC1R = 2 ;   //IC! <- RB2; See Table 10-2 on P108 of the datasheet
-    __builtin_write_OSCCONL(OSCCON | 0x40); // lock   PPS
-    TMR2 = 0;
-
-    T2CON = 0;
-    PR2 = 9999;
-    T2CONbits.TON = 1;
-    TMR2 = 0;
-    
-    IC1CON = 0;
-    IC1CONbits.ICTMR = 1; // timer 2
-    IC1CONbits.ICM = 1;   // capture on every edge
-
-    PR1=65000;      // Timer 1 setup for debugging purposes.
-    T1CON=0;
-    TMR1 = 104;
-    T1CONbits.TON = 1;
-    _T1IF = 0;
+    TRISBbits.TRISB6 = 1;   //set pin to input for TARE
 }

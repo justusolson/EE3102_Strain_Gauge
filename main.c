@@ -10,6 +10,7 @@
 #include "ADC.h"
 #include "LCD.h"
 #include "DELAY.h"
+#include "IC.h"
 #include <stdio.h>
 
 
@@ -32,8 +33,11 @@
 // Fail-Safe Clock Monitor is enabled)
 #pragma config FNOSC = FRCPLL      // Oscillator Select (Fast RC Oscillator with PLL module (FRCPLL))
 
+int offsetVal;
+
 void setup(void){
     CLKDIVbits.RCDIV = 0;
+    offsetVal = 0;
     lcd_init();//on I2C1
     char* test = "LCD up";
     lcd_printStrB(test, 0);
@@ -49,14 +53,24 @@ void loop(void){
     double adValue= 0.235;
     
     adValue = read_adc();
+    
+//    if(checkTare())
+//    {
+//        offsetVal = adValue;
+//    }
+    
     if(adValue >= 0){
-    sprintf(outStrA, "%7.6f", adValue);
+    sprintf(outStrA, "%7.6f", adValue + offsetVal);
     }
     else{
-        sprintf(outStrA, "%7.5f", adValue);
+        sprintf(outStrA, "%7.5f", adValue + offsetVal);
     }
     lcd_printStrB(outStrA, 0);
     lcd_printStrB(outStrB, 1);
+    
+//    checkTare();s //if this is 1 the button has been pressed
+    
+    
     wait(67);   //roughly 15 times per second which is the rate that ADC samples
 }
 

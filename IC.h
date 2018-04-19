@@ -12,6 +12,7 @@
 extern "C" {
 #endif
 
+    int checkTare(void);
     void ic_init(void);
 
 

@@ -78,19 +78,24 @@ void adc_config(int res, int pga, int mode){
     //write code to push outputByte to MCP
     
     I2C2CONbits.SEN = 1; //START bit
+    IFS3bits.MI2C2IF = 0; //reset
     while(I2C2CONbits.SEN==1);//wait for SEN to clear
-     IFS3bits.MI2C2IF = 0; //reset
+    while(IFS3bits.MI2C2IF==0);
+    
+     
     
     I2C2TRN = WRITE_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
-    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
+    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     
     I2C2TRN = outputByte;//config byte
-    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
+    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     
     I2C2CONbits.PEN = 1;
+    IFS3bits.MI2C2IF = 0; //reset
     while(I2C2CONbits.PEN==1);  //wait for stop bit to clear
+    while(IFS3bits.MI2C2IF==0);
     IFS3bits.MI2C2IF = 0; //reset
 }
 
@@ -116,10 +121,10 @@ void adc_init(void){
     I2C2CONbits.I2CEN = 1; //enable I2C bus
     IFS3bits.MI2C2IF = 0; //clear interrupt flag
     I2C2CONbits.ACKDT = 0;  //sends ACK
-    CNPU1bits.CN6PUE = 0;   
-    CNPU1bits.CN7PUE = 0; 
-    CNEN1bits.CN6IE =0;
-    CNEN1bits.CN7IE =0;
+//    CNPU1bits.CN6PUE = 0;   
+//    CNPU1bits.CN7PUE = 0; 
+//    CNEN1bits.CN6IE =0;
+//    CNEN1bits.CN7IE =0;
     
     /*
      AD1PCFGbits.PCFG4 = 1; //Sets SDA2/SCL2 as digital
