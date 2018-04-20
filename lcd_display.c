@@ -5,10 +5,14 @@
  * Created on March 1, 2018, 8:07 PM
  */
 
-#include "xc.h"
-#include "DELAY.h"
-#include "LCD.h"
+#include "math.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <p24Fxxxx.h>
+#include <xc.h>
+#define FCY 4000000UL //for __delay_ms() with 4MHz FRC internal clock
+#include <libpic30.h>
+#include "LCD.h"
 
 #define SLAVE_ADDRESS 0b01111100 //set to write, last bit is R/nW
 #define CONTROL_ADDRESS 0b000000
@@ -24,10 +28,12 @@ void lcd_cmd(char command)
      IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = SLAVE_ADDRESS; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    IFS1bits.MI2C1IF = 0; //reset
     while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = 0b00000000;//control byte
+    IFS1bits.MI2C1IF = 0; //reset
     while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
@@ -49,7 +55,7 @@ void lcd_init(void)
     TRISBbits.TRISB9 = 0;         //sets SDA1 to output
     TRISBbits.TRISB8 = 0;         //sets SCL1 to output
     I2C1CONbits.I2CEN = 0; //disable I2C bus
-    I2C1BRG = 0x9d;      //SCL at 100kHz
+    I2C1BRG = 39;      //SCL at 100kHz
     I2C1CONbits.I2CEN = 1; //enable I2C bus
     IFS1bits.MI2C1IF = 0; //clear interrupt flag
     
@@ -92,14 +98,17 @@ void lcd_printChar(char myChar)
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = SLAVE_ADDRESS; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    IFS1bits.MI2C1IF = 0; //reset
     while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = 0b01000000;//control byte, RS =1
+    IFS1bits.MI2C1IF = 0; //reset
     while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = myChar; //data byte
+    IFS1bits.MI2C1IF = 0; //reset
     while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     

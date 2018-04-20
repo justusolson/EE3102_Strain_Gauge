@@ -85,11 +85,15 @@ void adc_config(int res, int pga, int mode){
      
     
     I2C2TRN = WRITE_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    I2C2STATbits.ACKSTAT = 1;
     IFS3bits.MI2C2IF = 0; //reset
+    while (I2C2STATbits.ACKSTAT == 1);
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     
     I2C2TRN = outputByte;//config byte
+    I2C2STATbits.ACKSTAT = 1;
     IFS3bits.MI2C2IF = 0; //reset
+    while (I2C2STATbits.ACKSTAT == 1);
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     
     I2C2CONbits.PEN = 1;
@@ -109,17 +113,17 @@ void adc_config(int res, int pga, int mode){
  *              Microcontroller
  ******************************************************************/
 void adc_init(void){
-    AD1PCFGbits.PCFG4 = 1; //Sets SDA2/SCL2 as digital
-    AD1PCFGbits.PCFG5 = 1;
+//    AD1PCFGbits.PCFG4 = 1; //Sets SDA2/SCL2 as digital
+//    AD1PCFGbits.PCFG5 = 1;
     //RB3 = SCL2, RB2 = SDA2
-    TRISBbits.TRISB2 = 0;   //sets SDA2 to output
-    TRISBbits.TRISB3 = 0;   //sets SCL2 to output
+//    TRISBbits.TRISB2 = 0;   //sets SDA2 to output
+//    TRISBbits.TRISB3 = 0;   //sets SCL2 to output
     //I2C2CONbits.DISSLW = 0; //enabling slew rate control
-    I2C2ADD = 0x0;          //set addressing mode to 7 bits
+//    I2C2ADD = 0x0;          //set addressing mode to 7 bits
     I2C2CONbits.I2CEN = 0; //disable I2C bus
-    I2C2BRG = 0x4E;      //SCL at 100kHz
+    I2C2BRG = 39;      //SCL at 100kHz
     I2C2CONbits.I2CEN = 1; //enable I2C bus
-    IFS3bits.MI2C2IF = 0; //clear interrupt flag
+//    IFS3bits.MI2C2IF = 0; //clear interrupt flag
     I2C2CONbits.ACKDT = 0;  //sends ACK
 //    CNPU1bits.CN6PUE = 0;   
 //    CNPU1bits.CN7PUE = 0; 
@@ -158,30 +162,43 @@ void adc_init(void){
 
 double read_adc(void){
     
-    I2C2CONbits.ACKDT = 0;  //sends ACK
+//    I2C2CONbits.ACKDT = 0;  //sends ACK
     I2C2CONbits.SEN = 1; //START bit
-    while(I2C2CONbits.SEN==1);//wait for SEN to clear
     IFS3bits.MI2C2IF = 0; //reset
+    while(I2C2CONbits.SEN==1);//wait for SEN to clear
+    while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     
     I2C2TRN = READ_SLAVE; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
+    I2C2STATbits.ACKSTAT = 1;
+    IFS1bits.MI2C1IF = 0;
+    while(I2C2STATbits.ACKSTAT == 1);
     while(IFS3bits.MI2C2IF==0); //wait for it to be 1, ACK
     IFS3bits.MI2C2IF = 0; //reset
     
     I2C2CONbits.RCEN = 1;
-    while(!I2C2STATbits.RBF);//while the buffer is not full wait
+    I2C2STATbits.RBF = 0;
+    IFS1bits.MI2C1IF = 0;
+    while(I2C2CONbits.RCEN == 1);
+    while(I2C2STATbits.RBF == 0);//while the buffer is not full wait
+    while(IFS3bits.MI2C2IF==0);
     
     unsigned char UpperByte, LowerByte;
     UpperByte = I2C2RCV;
     I2C2CONbits.ACKEN=1;
-    
+    IFS1bits.MI2C1IF = 0;
     while(I2C2CONbits.ACKEN==1);//wait for ACKEN to clear
+    while(IFS3bits.MI2C2IF==0);
     
     I2C2CONbits.RCEN = 1;
-    while(!I2C2STATbits.RBF);//while the buffer is not full wait
+    I2C2STATbits.RBF = 0;
+    IFS1bits.MI2C1IF = 0;
+    while(I2C2CONbits.RCEN == 1);
+    while(I2C2STATbits.RBF == 0);//while the buffer is not full wait
+    while(IFS3bits.MI2C2IF==0);
     
     LowerByte = I2C2RCV;
-    I2C2CONbits.ACKDT = 1;  //sends NACK
-    I2C2CONbits.ACKEN=1;
+//    I2C2CONbits.ACKDT = 1;  //sends NACK
+//    I2C2CONbits.ACKEN=1;
     int wholeByte = (UpperByte <<8) + LowerByte;
     double outputVoltage;
     int outputNum;
