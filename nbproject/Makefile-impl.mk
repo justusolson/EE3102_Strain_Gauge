@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=EE3102_Strain_Gauge.X
+PROJECTNAME=EE3102_Strain_Gauge
 
 # Active Configuration
 DEFAULTCONF=default

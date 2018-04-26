@@ -3,12 +3,12 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>EE3102_Strain_Gauge</name>
-            <creation-uuid>58db5a40-70c7-4c82-a8a6-34d5340d3d94</creation-uuid>
+            <name>Strain_Gauge_Temp</name>
+            <creation-uuid>da64dd47-8d45-4e18-a3d4-389e9a22f81a</creation-uuid>
             <make-project-type>0</make-project-type>
-            <c-extensions/>
+            <c-extensions>c</c-extensions>
             <cpp-extensions/>
-            <header-extensions>c,h</header-extensions>
+            <header-extensions>h</header-extensions>
             <asminc-extensions/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>

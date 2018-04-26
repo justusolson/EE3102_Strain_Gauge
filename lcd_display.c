@@ -1,10 +1,3 @@
-/*
- * File:   lcd_display.c
- * Author: Justus
- *
- * Created on March 1, 2018, 8:07 PM
- */
-
 #include "math.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +6,7 @@
 #define FCY 4000000UL //for __delay_ms() with 4MHz FRC internal clock
 #include <libpic30.h>
 #include "LCD.h"
+#include "DELAY.h"
 
 #define SLAVE_ADDRESS 0b01111100 //set to write, last bit is R/nW
 #define CONTROL_ADDRESS 0b000000
@@ -24,45 +18,41 @@ unsigned char contrast = 0b00010111; //global variable for constrast
 void lcd_cmd(char command)
 {
     I2C1CONbits.SEN = 1; //START bit
-    while(I2C1CONbits.SEN==1);//wait for SEN to clear
-     IFS1bits.MI2C1IF = 0; //reset
+    while(I2C1CONbits.SEN==1); //wait for SEN to clear
+    IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = SLAVE_ADDRESS; //8 bits consisting of the salve address and the R/nW bit (0 = write, 1 = read)
     IFS1bits.MI2C1IF = 0; //reset
-    while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
+    while (IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = 0b00000000;//control byte
     IFS1bits.MI2C1IF = 0; //reset
-    while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
+    while (IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1TRN = command; //data byte
-    while(IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
+    while (IFS1bits.MI2C1IF==0); //wait for it to be 1, ACK
     IFS1bits.MI2C1IF = 0; //reset
     
     I2C1CONbits.PEN = 1; //STOP bit
-    while(I2C1CONbits.PEN == 1);//wait for Stop bit to complete
-     IFS1bits.MI2C1IF = 0; //reset
+    while (I2C1CONbits.PEN == 1);//wait for Stop bit to complete
+    IFS1bits.MI2C1IF = 0; //reset
 }
 
 void lcd_init(void)
-{
-    //using SDA1/SCL1
-    //AD1PCFGbits.PCFG4 = 1; //Sets SDA2/SCL2 as digital
-    //AD1PCFGbits.PCFG5 = 1;
-    //RB8 = SCL1, RB9 = SDA1       
-    TRISBbits.TRISB9 = 0;         //sets SDA1 to output
-    TRISBbits.TRISB8 = 0;         //sets SCL1 to output
-    I2C1CONbits.I2CEN = 0; //disable I2C bus
-    I2C1BRG = 39;      //SCL at 100kHz
-    I2C1CONbits.I2CEN = 1; //enable I2C bus
-    IFS1bits.MI2C1IF = 0; //clear interrupt flag
+{     
+    TRISBbits.TRISB9 = 0;   //sets SDA1 to output
+    TRISBbits.TRISB8 = 0;   //sets SCL1 to output
+    I2C1CONbits.I2CEN = 0;  //disable I2C bus
+    I2C1BRG = 39;           //SCL at 100kHz
+    I2C1CONbits.I2CEN = 1;  //enable I2C bus
+    IFS1bits.MI2C1IF = 0;   //clear interrupt flag
     
-    wait(50);   //wait 50ms
-    lcd_cmd(0b00111000);//function set, normal instruction mode <--- WHAT IS THE POINT
-    lcd_cmd(0b00111001);//function set, extended instruction mode
-    lcd_cmd(0b00010100);//internal OSC frequency
+    wait(50);            //wait 50ms
+    lcd_cmd(0b00111000); //function set, normal instruction mode <--- WHAT IS THE POINT
+    lcd_cmd(0b00111001); //function set, extended instruction mode
+    lcd_cmd(0b00010100); //internal OSC frequency
     
     unsigned char contrastmanip = contrast &0b00001111; //lower 4 bits
     contrastmanip |= 0b01110000; //results in 0111<C3:C0>
@@ -144,14 +134,6 @@ void lcd_printStr(const char *s)
     
 }
 
-  /**
-
-    <b>Description:</b> Writes string to screen on specified line
-
-    <b>Parameters:</b><br> <b>char text[]:</b> text string to be displayed<br>
-                  <b>int row:</b> chooses whether text is displayed on first(0) or second line(1) 
-  
- */
 void lcd_printStrB(char text[], int row){
     int i = 0;
     lcd_setCursor(row,0);
@@ -167,18 +149,6 @@ void lcd_printStrB(char text[], int row){
     return;
 }
 
-/**
- * 
- * @param <b>RS:</b>value of the RS bit in address frame
- * @param <b>command:</b> data to be written during data frame
- * 
- * <b>Description:</b> Sends START sequence and slave address followed by a single command to be followed by subseguent lcd_cmdSeqMid calls
- * 
- * <b>Example:</b><code>//Writes "Foo" to display
- *                lcd_cmdSeqStart(1, 'F');
- *                lcd_cmdSegMid(1, 'o');
- *                lcd_cmdSeqEnd(1, 'o');</code>
- */
 void lcd_cmdSeqStart(int RS, char command){
     I2C1CONbits.SEN = 1; //START bit
     while(I2C1CONbits.SEN==1);//wait for SEN to clear
@@ -198,20 +168,6 @@ void lcd_cmdSeqStart(int RS, char command){
     return;
 }
 
-/**
- * 
- * @param <b>RS:</b>value of the RS bit in address frame
- * @param <b>command:</b> data to be written during data frame
- * 
- * <b>Description:</b> Sends single command byte to be followed by subsequent lcd_cmdSeqMid() or a lcd_cmdSeqEnd() call
- * 
- * <b>Preconditions:</b> First lcd_cmdSeqMid call must be preceeded by a lcd_cmdSeqStart() call
- * 
- * <b>Example:</b><code>//Writes "Foo" to display
- *                lcd_cmdSeqStart(1, 'F');
- *                lcd_cmdSegMid(1, 'o');
- *                lcd_cmdSeqEnd(1, 'o');</code>
- */
 void lcd_cmdSeqMid(int RS, char command){
     I2C1TRN = ((1 << 7) | (RS << 6) | CONTROL_ADDRESS);
     while(IFS1bits.MI2C1IF == 0);
@@ -224,20 +180,6 @@ void lcd_cmdSeqMid(int RS, char command){
     
 }
 
-/**
- * 
- * @param <b>RS:</b>value of the RS bit in address frame
- * @param <b>command:</b> data to be written during data frame
- * 
- * <b>Description:</b> Sends single command byte followed by END sequence
- * 
- * <b>Preconditions:</b> Must be preceeded by a lcd_cmdSeqStart() and optionally one or more lcd_cmdSeqMid() calls
- * 
- * <b>Example:</b><code>//Writes "Foo" to display
- *                lcd_cmdSeqStart(1, 'F');
- *                lcd_cmdSegMid(1, 'o');
- *                lcd_cmdSeqEnd(1, 'o');</code>
- */
 void lcd_cmdSeqEnd(int RS, char command){
     I2C1TRN = ((0 << 7) | (RS << 6) | CONTROL_ADDRESS);
     while(IFS1bits.MI2C1IF == 0);
