@@ -1,10 +1,3 @@
-/* 
- * File:   IC.h
- * Author: Justus
- *
- * Created on April 12, 2018, 5:02 PM
- */
-
 #ifndef IC_H
 #define	IC_H
 
