@@ -1,11 +1,3 @@
-/*
- * File:   main.c
- * Author: Justus
- *
- * Created on March 7, 2018, 9:11 PM
- */
-
-
 #include "math.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +7,7 @@
 #include <libpic30.h>
 #include "ADC.h"
 #include "LCD.h"
+#include "DELAY.h"
 #include "IC.h"
 
 
@@ -41,29 +34,31 @@
 int offsetVal;
 
 void setup(void){
+    offsetVal = 0;
+    
     CLKDIVbits.RCDIV = 0;
     AD1PCFG = 0x9fff;
-    offsetVal = 0;
-    lcd_init();//on I2C1
+    lcd_init(); //on I2C1
+    
     char* test = "LCD up";
     lcd_printStrB(test, 0);
     wait(100);
-    adc_init();//on I2C2
-//    ic_init();
+    
+    adc_init(); //on I2C2
     return;
 }
 
 void loop(void){
     char outStrA[8];
     char outStrB[8]= " Volts";
-    double adValue= 0.235;
+    double adValue= 0.1234;
     
     adValue = read_adc();
     
-//    if(checkTare())
-//    {
-//        offsetVal = adValue;
-//    }
+    if(checkTare())
+    {
+        offsetVal = adValue;
+    }
     
     if(adValue >= 0){
     sprintf(outStrA, "%7.6f", adValue + offsetVal);
@@ -73,9 +68,6 @@ void loop(void){
     }
     lcd_printStrB(outStrA, 0);
     lcd_printStrB(outStrB, 1);
-    
-//    checkTare();s //if this is 1 the button has been pressed
-    
     
     wait(67);   //roughly 15 times per second which is the rate that ADC samples
 }
